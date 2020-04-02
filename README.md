@@ -26,7 +26,7 @@ jsonfromtable(options, headers).then(data => {
 })
 ```
 
-`jsonfromtable` function takes two arguments `options` and `headers.
+`jsonfromtable` function takes two arguments `options` and `headers`.
 
 ## Options
 
@@ -66,9 +66,9 @@ options = {
 
 ## Headers
 
-If the table already has `<th>` tag then you don't need to worry about headers.
+If the table already has `<th>` tags then you don't need to worry about headers.
 
-If the table doesn't have `<th>` tag then you need to pass headers on your own. Make sure no of items in headers in equal to the no of columns of table.
+If the table doesn't have `<th>` tags then you need to pass headers on your own. Make sure no of items in headers in equal to the no of columns of table.
 
 ```js
 headers = ['header1', 'header2', 'header3']
@@ -78,4 +78,4 @@ If your table has `<th>` tags as headers but you want to pass your own header th
 
 ## License
 
-MIT
+**MIT**
