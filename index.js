@@ -10,7 +10,7 @@ const defaultOptions = {
   format: 'jsobject'
 }
 
-const htmlTableToJson = async (options, headers) => {
+const htmlTableToJson = async (options = defaultOptions, headers) => {
   const { url, html, selector, format } = { ...defaultOptions, ...options }
 
   let data
@@ -20,6 +20,8 @@ const htmlTableToJson = async (options, headers) => {
     data = await response.text()
   } else if (html) {
     data = html
+  } else {
+    return []
   }
 
   const $ = cheerio.load(data)
@@ -38,12 +40,5 @@ const htmlTableToJson = async (options, headers) => {
     return body
   }
 }
-
-htmlTableToJson({
-  url: 'https://www.worldometers.info/coronavirus/',
-  format: 'json'
-}).then(data => {
-  console.log(data)
-})
 
 module.exports = htmlTableToJson

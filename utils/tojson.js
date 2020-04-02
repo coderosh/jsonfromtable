@@ -25,7 +25,7 @@ const toJson = ($, tableSelector, _header) => {
 
   if (header.length === 0) {
     throw new Error(
-      'The table do not have any headers (<th></th>), please provide header tag as a second arguement'
+      'The table do not have any headers (<th></th>), please provide array of headers as a second arguement'
     )
   }
 
