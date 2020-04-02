@@ -2,6 +2,8 @@
 
 Converts html tables to JSON and JS objects
 
+[![NPM](https://nodei.co/npm/jsonfromtable.png)](https://nodei.co/npm/jsonfromtable/)
+
 ## Installation
 
 Install via npm
