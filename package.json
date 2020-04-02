@@ -1,0 +1,29 @@
+{
+  "name": "jsonfromtable",
+  "version": "1.0.0",
+  "description": "Generate json output from html tables",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acharyaroshanji/jsonfromtable.git"
+  },
+  "keywords": [
+    "[\"tabletojson\"",
+    "\"htmltabletojson\"",
+    "\"scrape",
+    "tables\"]"
+  ],
+  "author": "Roshan Acharya",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/acharyaroshanji/jsonfromtable/issues"
+  },
+  "homepage": "https://github.com/acharyaroshanji/jsonfromtable#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "node-fetch": "^2.6.0"
+  }
+}
