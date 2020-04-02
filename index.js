@@ -6,11 +6,12 @@ const toJson = require('./utils/tojson')
 const defaultOptions = {
   url: undefined,
   html: undefined,
-  selector: 'table'
+  selector: 'table',
+  format: 'jsobject'
 }
 
-const html = async (options, headers) => {
-  const { url, html, selector } = { ...defaultOptions, ...options }
+const htmlTableToJson = async (options, headers) => {
+  const { url, html, selector, format } = { ...defaultOptions, ...options }
 
   let data
 
@@ -23,27 +24,26 @@ const html = async (options, headers) => {
 
   const $ = cheerio.load(data)
 
-  let body = toJson($, 'table', headers)
+  if ($('table').html() === null) {
+    throw new Error(
+      `Please provide ${url ? 'url' : 'html'} which contains table`
+    )
+  }
 
-  console.log(body)
+  let body = toJson($, selector, headers)
+
+  if (format === 'json') {
+    return JSON.stringify(body)
+  } else {
+    return body
+  }
 }
 
-html(
-  {
-    html: `
-<table style="width:100%">
-  <tr>
-    <td>Jill</td>
-    <td>Smith</td>
-    <td>50</td>
-  </tr>
-  <tr>
-    <td>Eve</td>
-    <td>Jackson</td>
-    <td>94</td>
-  </tr>
-</table>
-`
-  },
-  ['Name', 'LastName', 'Age']
-)
+htmlTableToJson({
+  url: 'https://www.worldometers.info/coronavirus/',
+  format: 'json'
+}).then(data => {
+  console.log(data)
+})
+
+module.exports = htmlTableToJson

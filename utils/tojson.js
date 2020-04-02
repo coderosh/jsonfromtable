@@ -3,6 +3,12 @@ const toJson = ($, tableSelector, _header) => {
   const body = []
   let header = []
 
+  if ($(tableSelector).html() === null) {
+    throw new Error(
+      `${tableSelector} is not a valid selector for table, please try again`
+    )
+  }
+
   // Add headers from table to header array
   $(`${tableSelector} th`).each((_, el) => {
     header.push(
@@ -26,7 +32,7 @@ const toJson = ($, tableSelector, _header) => {
   let d = {},
     j = 0
 
-  // For tds in table
+  // loop all tds in table
   $(`${tableSelector} td`).each((_, el) => {
     let val = $(el)
       .text()
