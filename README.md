@@ -28,7 +28,7 @@ jsonfromtable(options, headers).then(data => {
 })
 ```
 
-`jsonfromtable` function takes two arguments `options` and `headers`.
+`jsonfromtable` function takes two arguments `options` and `headers` and returns promise.
 
 ## Options
 
@@ -39,6 +39,16 @@ If you want the output from a url then you need to pass `url` option. The url sh
 ```js
 options = {
   url: 'https://www.example.com'
+}
+```
+
+### html
+
+If you want the output from a html then you need to pass `html` option. The html should contain `table` tag.
+
+```js
+options = {
+  html: '<table>....</table>'
 }
 ```
 

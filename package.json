@@ -1,6 +1,6 @@
 {
   "name": "jsonfromtable",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Generate json output from html tables",
   "main": "index.js",
   "repository": {
