@@ -30,6 +30,8 @@ jsonfromtable(options, headers).then(data => {
 
 `jsonfromtable` function takes two arguments `options` and `headers` and returns promise.
 
+Check this example [example](https://codesandbox.io/s/jsonfromtable-example-140hz) in codesandbox.
+
 ## Options
 
 ### url
