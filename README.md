@@ -12,12 +12,6 @@ Install via npm
 npm install jsonfromtable
 ```
 
-Install via yarn
-
-```batch
-yarn add jsonfromtable
-```
-
 ## Usage
 
 ```js
@@ -30,7 +24,7 @@ jsonfromtable(options, headers).then(data => {
 
 `jsonfromtable` function takes two arguments `options` and `headers` and returns promise.
 
-Check this example [example](https://codesandbox.io/s/jsonfromtable-example-140hz) in codesandbox.
+Check this [example](https://codesandbox.io/s/jsonfromtable-example-140hz) in codesandbox.
 
 ## Options
 
@@ -80,8 +74,6 @@ options = {
 
 ## Headers
 
-If the table already has `<th>` tags then you don't need to worry about headers.
-
 If the table doesn't have `<th>` tags then you need to pass headers on your own. Make sure no of items in headers in equal to the no of columns of table.
 
 ```js
@@ -92,4 +84,4 @@ If your table has `<th>` tags as headers but you want to pass your own header th
 
 ## License
 
-**MIT**
+MIT

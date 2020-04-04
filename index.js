@@ -27,9 +27,7 @@ const jsonfromtable = async (options = defaultOptions, headers) => {
     const $ = cheerio.load(data)
 
     if ($('table').html() === null) {
-      throw new Error(
-        `Please provide ${url ? 'url' : 'html'} which contains table`
-      )
+      return []
     }
 
     let body = toJson($, selector, headers)

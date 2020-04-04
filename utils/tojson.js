@@ -4,12 +4,9 @@ const toJson = ($, tableSelector, _header) => {
   let header = []
 
   if ($(tableSelector).html() === null) {
-    throw new Error(
-      `${tableSelector} is not a valid selector for table, please try again`
-    )
+    throw new Error(`${tableSelector} is not a valid selector for table`)
   }
 
-  // Add headers from table to header array
   $(`${tableSelector} th`).each((_, el) => {
     header.push(
       $(el)
@@ -18,21 +15,19 @@ const toJson = ($, tableSelector, _header) => {
     )
   })
 
-  //  Compare table header to header given
   if (_header) {
     header = map(header, _header)
   }
 
   if (header.length === 0) {
     throw new Error(
-      'The table do not have any headers (<th></th>), please provide array of headers as a second arguement'
+      "The table don't have any headers (th), please provide headers as a second arguement"
     )
   }
 
   let d = {},
     j = 0
 
-  // loop all tds in table
   $(`${tableSelector} td`).each((_, el) => {
     let val = $(el)
       .text()
