@@ -9,7 +9,7 @@ const defaultOptions = {
   format: 'jsobject'
 }
 
-const htmlTableToJson = async (options = defaultOptions, headers) => {
+const jsonfromtable = async (options = defaultOptions, headers) => {
   try {
     const { url, html, selector, format } = { ...defaultOptions, ...options }
 
@@ -43,4 +43,4 @@ const htmlTableToJson = async (options = defaultOptions, headers) => {
   }
 }
 
-module.exports = htmlTableToJson
+module.exports = jsonfromtable
