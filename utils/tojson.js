@@ -8,11 +8,7 @@ const toJson = ($, tableSelector, _header) => {
   }
 
   $(`${tableSelector} th`).each((_, el) => {
-    header.push(
-      $(el)
-        .text()
-        .trim()
-    )
+    header.push($(el).text().trim())
   })
 
   if (_header) {
@@ -29,17 +25,8 @@ const toJson = ($, tableSelector, _header) => {
     j = 0
 
   $(`${tableSelector} td`).each((_, el) => {
-    let val = $(el)
-      .text()
-      .trim()
+    let val = $(el).text().trim()
 
-    if (!isNaN(parseFloat(val))) {
-      val = parseFloat(val)
-    }
-
-    if (val == '') {
-      val = 0
-    }
     d[`${header[j]}`] = val
 
     if (j == header.length - 1) {
