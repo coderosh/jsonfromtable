@@ -6,7 +6,7 @@ const defaultOptions = {
   url: undefined,
   html: undefined,
   selector: 'table',
-  format: 'jsobject'
+  format: 'jsobject',
 }
 
 const jsonfromtable = async (options = defaultOptions, headers) => {

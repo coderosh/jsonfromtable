@@ -7,18 +7,13 @@ const toJson = ($, tableSelector, _header) => {
     throw new Error(`${tableSelector} is not a valid selector for table`)
   }
 
-  $(`${tableSelector} th`).each((_, el) => {
+  const firstRow = $($(`${tableSelector} tr`)[0]).children()
+  $(firstRow).each((_, el) => {
     header.push($(el).text().trim())
   })
 
   if (_header) {
     header = map(header, _header)
-  }
-
-  if (header.length === 0) {
-    throw new Error(
-      "The table don't have any headers (th), please provide headers as a second arguement"
-    )
   }
 
   let d = {},

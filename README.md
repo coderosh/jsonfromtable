@@ -17,7 +17,7 @@ npm install jsonfromtable
 ```js
 const jsonfromtable = require('jsonfromtable')
 
-jsonfromtable(options, headers).then(data => {
+jsonfromtable(options, headers).then((data) => {
   console.log(data)
 })
 ```
@@ -34,7 +34,7 @@ If you want the output from a url then you need to pass `url` option. The url sh
 
 ```js
 options = {
-  url: 'https://www.example.com'
+  url: 'https://www.example.com',
 }
 ```
 
@@ -44,7 +44,7 @@ If you want the output from a html then you need to pass `html` option. The html
 
 ```js
 options = {
-  html: '<table>....</table>'
+  html: '<table>....</table>',
 }
 ```
 
@@ -55,7 +55,7 @@ If you want the json output then you can pass `format` option.
 ```js
 options = {
   url: 'https://www.example.com',
-  format: 'json' // default => jsobject
+  format: 'json', // default => jsobject
 }
 ```
 
@@ -65,8 +65,8 @@ If the page has more than one table, then you can pass id of the table as `selec
 
 ```js
 options = {
-  url: 'https:///www.example.com',
-  selector: '#table_example' // default => table
+  url: 'https://www.example.com',
+  selector: '#table_example', // default => table
 }
 ```
 
@@ -74,13 +74,15 @@ options = {
 
 ## Headers
 
-If the table doesn't have `<th>` tags then you need to pass headers on your own. Make sure no of items in headers in equal to the no of columns of table.
+The first row from table is taken a key. You can also pass your own headers
 
 ```js
-headers = ['header1', 'header2', 'header3']
+options = {
+  url: 'https://www.example.com',
+  selector: '#table_example', // default => table
+  headers: ['header1', 'header2', 'header3'],
+}
 ```
-
-If your table has `<th>` tags as headers but you want to pass your own header then also it will work and it is not necessary to pass all the headers equal to no of columns.
 
 ## License
 
