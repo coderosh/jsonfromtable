@@ -58,6 +58,7 @@ interface Options {
   hSelector?: string // head selector
   bSelector?: [string, string] // body selector [row, td]
   format?: 'json' | 'array' | 'raw' | 'object' // output format
+  headers?: string[] // custom headers
 }
 ```
 
@@ -169,6 +170,17 @@ const bSelectors = [
   ['tr:not(:first-child)', 'td'],
   ['tr', 'td'],
 ]
+```
+
+### headers
+
+You can don't like the headers in table, you can add your own.
+
+```js
+jsonFromTable({
+  html: `<table>...</table>`
+  headers: ["SN", "Name", "Age"]
+})
 ```
 
 ## License

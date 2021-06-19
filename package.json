@@ -1,6 +1,6 @@
 {
   "name": "jsonfromtable",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Convert html tables to javascript objects, array or json",
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "lint": "eslint src/**.ts",
     "test": "jest",
     "clean": "rimraf dist",
-    "cb": "yarn clean && yarn build"
+    "cb": "yarn clean && yarn build",
+    "prepublishOnly": "yarn lint && yarn test && yarn build"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,10 @@
     "html to json",
     "table parser",
     "html table",
-    "table scrapper"
+    "table scrapper",
+    "scrapper",
+    "json",
+    "table"
   ],
   "author": "Roshan Acharya <acharyaroshan2357@gmail.com>",
   "license": "MIT",

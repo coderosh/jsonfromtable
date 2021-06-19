@@ -9,6 +9,7 @@ interface Options {
   hSelector?: string
   bSelector?: [string, string]
   format?: Format
+  headers?: string[]
 }
 
 /**
@@ -32,6 +33,7 @@ function jsonFromTable<T extends Format>(options: Options = {}) {
     hSelector = 'tr:first-child th',
     bSelector = ['tr:not(:first-child)', 'td'],
     format = 'object',
+    headers: customHeaders = [],
   } = options
   // prettier-ignore
   const hSelectors = [hSelector, "thead tr:first-child th", "tr:first-child th", "tr:first-child td"];
@@ -57,14 +59,12 @@ function jsonFromTable<T extends Format>(options: Options = {}) {
     if (table.html() === null)
       throw new Error(`Couldn't find table with selector "${selector}"`)
 
-    const headers = getHeaders($, table, hSelectors)
-    const body = getBody($, table, bSelectors)
+    const headers =
+      customHeaders.length > 0
+        ? customHeaders
+        : getHeaders($, table, hSelectors)
 
-    if (headers.values.length !== body.values.length) {
-      console.warn(
-        `Length of body and head is not same:\nHeader: ${headers.values.length}\nBody: ${body.values.length}`
-      )
-    }
+    const body = getBody($, table, bSelectors)
 
     return output(headers, body, format) as Result<T>
   }

@@ -1,0 +1,10 @@
+src/
+tests/
+.github/
+node_modules/
+tsconfig.json
+jest.config.ts
+.eslintrc.json
+.prettierrc
+CODE_OF_CONDUCT.md
+.npmignore
