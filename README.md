@@ -16,7 +16,7 @@ Install via npm
 npm install jsonfromtable
 ```
 
-Or yarn
+Or via yarn
 
 ```sh
 yarn add jsonfromtable
@@ -96,6 +96,7 @@ const json = jsonFromTable({
   html: `<table>...</table>`,
   format: 'json',
 })
+console.log(json)
 
 jsonFromTable({
   url: `https://example.com`,
@@ -106,6 +107,7 @@ const [headers, body] = jsonFromTable({
   html: `<table>...</table>`,
   format: 'raw',
 })
+console.log({ headers, body })
 ```
 
 ### selector
