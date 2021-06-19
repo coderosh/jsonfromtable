@@ -1,6 +1,12 @@
 # jsonFromTable
 
-Converts html tables to JSON and JS objects
+Convert html tables to javascript objects, array or json.
+
+<a href="https://www.npmjs.com/package/sjsonfromtable"><img alt="NPM" src="https://img.shields.io/npm/v/jsonfromtable" /></a>
+<a href="https://github.com/coderosh/jsonfromtable"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+<a href="#"><img alt="CI" src="https://img.shields.io/github/workflow/status/coderosh/jsonfromtable/CI"></a>
+<a href="https://github.com/coderosh/jsonfromtalbe"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" /></a>
+<a href="https://github.com/coderosh/jsonfromtalbe"><img src="https://img.shields.io/badge/types-typescript-blue.svg" alt="Typescript" /></a>
 
 ## Installation
 
@@ -10,10 +16,17 @@ Install via npm
 npm install jsonfromtable
 ```
 
+Or yarn
+
+```sh
+yarn add jsonfromtable
+```
+
 ## Usage
 
 ```js
 const { jsonFromtable } = require('jsonfromtable')
+// OR import { jsonFromTable } from "jsonfromtable"
 
 const obj = jsonFromTable({
   html: `<table>...</table>`,
