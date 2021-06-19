@@ -40,10 +40,9 @@ function camalize(str: string) {
 
 function toObject(headers: string[], body: string[][]) {
   const obj: { [key: string]: string[] } = {};
-  const max = Math.max(body.length, headers.length);
 
-  for (let i = 0; i < max; i++) {
-    obj[camalize(`${headers[i] || i}`)] = body[i];
+  for (let i = 0; i < headers.length; i++) {
+    obj[camalize(`${headers[i] || i}`)] = body.map((v) => v[i]);
   }
 
   return obj;
@@ -54,14 +53,13 @@ function toJSON(headers: string[], body: string[][]) {
 }
 
 function toArray(headers: string[], body: string[][]) {
-  const max = Math.max(body.length, headers.length);
   const arr: [string, string[]][] = [];
 
-  for (let i = 0; i < max; i++) {
-    arr[i] = [`${headers[i] || i}`, body[i]];
+  for (let i = 0; i < headers.length; i++) {
+    arr[i] = [`${headers[i] || i}`, body.map((v) => v[i])];
   }
 
   return arr;
 }
 
-export { output, Format, Result };
+export { output, Format, Result, camalize, toJSON, toObject, toArray };

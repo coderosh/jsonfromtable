@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import cheerio, { Cheerio, CheerioAPI, Node } from "cheerio";
 import { Format, output, Result } from "./utils";
 
@@ -71,7 +72,7 @@ function jsonFromTable<T extends Format>(options: Options = {}) {
 
 function getHeaders($: CheerioAPI, table: Cheerio<Node>, selectors: string[]) {
   for (const selector of selectors) {
-    const list = $(selector, table);
+    const list = $(selector, table.html());
 
     if (list.html() !== null) {
       const values = list.toArray().map((v) => $(v).text().trim());
@@ -84,14 +85,17 @@ function getHeaders($: CheerioAPI, table: Cheerio<Node>, selectors: string[]) {
 
 function getBody($: CheerioAPI, table: Cheerio<Node>, selectors: string[][]) {
   for (const selector of selectors) {
-    const rows = $(selector[0], table).toArray();
+    const rows = $(selector[0], table.html()).toArray();
 
     if (rows.length > 0) {
       let values: any[] = [];
 
       for (const row of rows) {
-        const tds = $(selector[1], row).toArray();
-        values.push(tds.map((v) => $(v).text()));
+        const tds = $(selector[1], $(row).html())
+          .toArray()
+          .map((v) => $(v).text());
+
+        values.push(tds);
       }
 
       return values;
