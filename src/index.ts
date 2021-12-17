@@ -1,108 +1,57 @@
 import fetch from 'node-fetch'
-import cheerio, { Cheerio, CheerioAPI, Node } from 'cheerio'
-import { Format, output, Result } from './utils'
+import { toArray, toJson, parseTable, ParseTableOptions } from './utils'
 
-interface Options {
-  url?: string
-  html?: string
-  selector?: string
-  hSelector?: string
-  bSelector?: [string, string]
-  format?: Format
-  headers?: string[]
+interface Options extends ParseTableOptions {
+  titles?: string[]
+  firstRowIsHeading?: boolean
+  includeFirstRowInBody?: boolean
 }
 
-/**
- * Get JSON, Object, Array from html tables
- *
- * @param options Options
- */
-function jsonFromTable<T extends Format = 'object'>(
-  options: { url: string; format?: T } & Options
-): Promise<Result<T>>
+class JSONFromTable {
+  static arrayFromString(
+    html: string,
+    options: Options = {}
+  ): { titles: string[]; body: string[][] } {
+    let {
+      titles = [],
+      firstRowIsHeading = true,
+      includeFirstRowInBody = false,
+      ...parseTableOptions
+    } = options
 
-function jsonFromTable<T extends Format = 'object'>(
-  options: { html: string; format?: T } & Options
-): Result<T>
+    const table = parseTable(html, parseTableOptions)
 
-function jsonFromTable<T extends Format>(options: Options = {}) {
-  const {
-    html,
-    url,
-    selector = 'table',
-    hSelector = 'tr:first-child th',
-    bSelector = ['tr:not(:first-child)', 'td'],
-    format = 'object',
-    headers: customHeaders = [],
-  } = options
-  // prettier-ignore
-  const hSelectors = [hSelector, "thead tr:first-child th", "tr:first-child th", "tr:first-child td"];
-  // prettier-ignore
-  const bSelectors = [bSelector, ["tbody tr", "td"], ["tr:not(:first-child)", "td"], ["tr", "td"]];
+    let body = toArray(table)
 
-  if (html) {
-    return htmlTableToJson(html)
-  } else if (url) {
-    return fetch(url).then(async (res) => {
-      const html = await res.text()
-      return htmlTableToJson(html)
-    })
-  } else {
-    throw new Error(`You need to provide at least a url or html`)
+    if (firstRowIsHeading && titles.length === 0) titles = body[0]
+    if (!includeFirstRowInBody) body = body.slice(1)
+
+    return { titles, body }
   }
 
-  function htmlTableToJson(html: string) {
-    const $ = cheerio.load(html)
+  static async arrayFromUrl(
+    url: string,
+    options: Options = {}
+  ): Promise<{ titles: string[]; body: string[][] }> {
+    const html = await fetch(url).then((res) => res.text())
+    return JSONFromTable.arrayFromString(html, options)
+  }
 
-    const table = $(selector)
+  static fromString(
+    html: string,
+    options: Options = {}
+  ): { [key: string]: string }[] {
+    const { titles, body } = JSONFromTable.arrayFromString(html, options)
+    return toJson(titles, body)
+  }
 
-    if (table.html() === null)
-      throw new Error(`Couldn't find table with selector "${selector}"`)
-
-    const headers =
-      customHeaders.length > 0
-        ? customHeaders
-        : getHeaders($, table, hSelectors)
-
-    const body = getBody($, table, bSelectors)
-
-    return output(headers, body, format) as Result<T>
+  static async fromUrl(
+    url: string,
+    options: Options = {}
+  ): Promise<{ [key: string]: string }[]> {
+    const html = await fetch(url).then((res) => res.text())
+    return JSONFromTable.fromString(html, options)
   }
 }
 
-function getHeaders($: CheerioAPI, table: Cheerio<Node>, selectors: string[]) {
-  for (const selector of selectors) {
-    const list = $(selector, table.html())
-
-    if (list.html() !== null) {
-      const values = list.toArray().map((v) => $(v).text().trim())
-      return values
-    }
-  }
-
-  return []
-}
-
-function getBody($: CheerioAPI, table: Cheerio<Node>, selectors: string[][]) {
-  for (const selector of selectors) {
-    const rows = $(selector[0], table.html()).toArray()
-
-    if (rows.length > 0) {
-      const values: string[][] = []
-
-      for (const row of rows) {
-        const tds = $(selector[1], $(row).html())
-          .toArray()
-          .map((v) => $(v).text())
-
-        values.push(tds)
-      }
-
-      return values
-    }
-  }
-
-  return []
-}
-
-export { jsonFromTable, Format, Result, Options, output }
+export { JSONFromTable, Options }

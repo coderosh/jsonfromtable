@@ -1,65 +1,117 @@
-type Format = 'array' | 'json' | 'object' | 'raw'
+import render from 'dom-serializer'
+import { selectAll, selectOne } from 'css-select'
+import { DomUtils, parseDocument } from 'htmlparser2'
 
-type Result<T extends Format = 'object'> = T extends 'json'
-  ? string
-  : T extends 'object'
-  ? { [key: string]: string[] }
-  : T extends 'array'
-  ? [string, string[]][]
-  : { headers: string[]; body: string[][] }
+const { getAttributeValue, textContent } = DomUtils
 
-/**
- * Convert headers and body to different format
- *
- * @param headers array of headers
- * @param body array of body
- * @param format format of output
- */
-function output(
-  headers: string[],
-  body: string[][],
-  format: Format = 'object'
+function getRowWithColumns(
+  tableDoc: ReturnType<typeof parseDocument>,
+  selectors: [string, string],
+  shouldBeText: boolean,
+  trim: boolean
 ) {
-  const fn =
-    format === 'json'
-      ? toJSON
-      : format === 'object'
-      ? toObject
-      : format === 'array'
-      ? toArray
-      : (headers: string[], body: string[][]) => ({ headers, body })
+  const rowSelector = selectors[0] || 'tr'
+  const colSelector = selectors[1] || 'td,th'
 
-  return fn(headers, body)
+  return selectAll(rowSelector, tableDoc).map((tr) =>
+    selectAll(colSelector, tr).map((td) => {
+      const rowspan = (td && +getAttributeValue(td as any, 'rowspan')!) || 1
+      const colspan = (td && +getAttributeValue(td as any, 'colspan')!) || 1
+      const value =
+        (td && (shouldBeText ? textContent(td) : render(td.children))) || ''
+      return { value: trim ? value.trim() : value, colspan, rowspan }
+    })
+  )
 }
 
-function camalize(str: string) {
-  return str
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9]+(.)/g, (_, m) => m.toUpperCase())
+interface ParseTableOptions {
+  tableSelector?: string
+  rowColSelector?: [string, string]
+  shouldBeText?: boolean
+  trim?: boolean
 }
 
-function toObject(headers: string[], body: string[][]) {
-  const obj: { [key: string]: string[] } = {}
+function parseTable(html: string, options: ParseTableOptions) {
+  const {
+    tableSelector = 'table',
+    rowColSelector = ['tr', 'td,th'],
+    shouldBeText = true,
+    trim = true,
+  } = options
 
-  for (let i = 0; i < headers.length; i++) {
-    obj[camalize(`${headers[i] || i}`)] = body.map((v) => v[i])
+  const document = parseDocument(html)
+  const table = selectOne(tableSelector, document)
+
+  if (!table) throw new Error(`${tableSelector} not found in document.`)
+
+  return getRowWithColumns(table, rowColSelector, shouldBeText, trim)
+}
+
+function toArray(table: ReturnType<typeof parseTable>) {
+  const data: ReturnType<typeof parseTable> = []
+
+  for (let i = 0; i < table.length; i++) {
+    const tr = table[i]
+
+    for (let j = 0; j < tr.length; j++) {
+      const td = tr[j]
+
+      for (let c = 0; c < td.colspan; c++) {
+        if (!data[i]) data[i] = []
+
+        data[i].push({ ...td, colspan: 1 })
+      }
+    }
   }
 
-  return obj
-}
-
-function toJSON(headers: string[], body: string[][]) {
-  return JSON.stringify(toObject(headers, body))
-}
-
-function toArray(headers: string[], body: string[][]) {
-  const arr: [string, string[]][] = []
-
-  for (let i = 0; i < headers.length; i++) {
-    arr[i] = [`${headers[i] || i}`, body.map((v) => v[i])]
+  for (let i = 0; i < data.length; i++) {
+    const tr = data[i]
+    for (let j = 0; j < tr.length; j++) {
+      const td = tr[j]
+      for (let r = 1; r < td.rowspan; r++) {
+        if (!data[i + r]) data[i + r] = []
+        data[i + r].splice(j, 0, { ...td, rowspan: 1 })
+      }
+    }
   }
 
-  return arr
+  return data.map((a) => a.map((a) => a.value))
 }
 
-export { output, Format, Result, camalize, toJSON, toObject, toArray }
+function toJson(titles: string[], array: ReturnType<typeof toArray>) {
+  titles = validTitles(titles)
+
+  const data = []
+  for (let i = 0; i < array.length; i++) {
+    const tr = array[i]
+    const obj: { [key: string]: string } = {}
+    for (let j = 0; j < tr.length; j++) {
+      const td = tr[j]
+      const title = titles[j] || `noTitle${j}`
+      obj[title] = td
+    }
+    data.push(obj)
+  }
+  return data
+}
+
+function validTitles(titles: string[]) {
+  titles = titles.map((a) => a.trim())
+
+  const newTitles: string[] = []
+  const dups: string[] = []
+
+  for (const title of titles) {
+    if (dups.includes(title)) {
+      newTitles.push(`${title}${dups.filter((a) => a === title).length + 1}`)
+    } else {
+      newTitles.push(title)
+    }
+
+    dups.push(title)
+  }
+
+  return newTitles
+}
+
+export { parseTable, toArray, toJson, ParseTableOptions }

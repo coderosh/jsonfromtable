@@ -1,6 +1,6 @@
 # jsonFromTable
 
-Convert html tables to javascript objects, array or json.
+Convert html tables to object (or array). Supports complex rowspan and colspan.
 
 <a href="https://www.npmjs.com/package/sjsonfromtable"><img alt="NPM" src="https://img.shields.io/npm/v/jsonfromtable" /></a>
 <a href="https://github.com/coderosh/jsonfromtable"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
@@ -25,163 +25,78 @@ yarn add jsonfromtable
 ## Usage
 
 ```js
-const { jsonFromtable } = require('jsonfromtable')
-// OR import { jsonFromTable } from "jsonfromtable"
+const { JSONFromTable } = require('jsonfromtable')
 
-const obj = jsonFromTable({
-  html: `<table>...</table>`,
-})
+const obj = JSONFromTable.fromString(`<table>...</table>`)
+// [ { title1: value1, title2: value2, ... }, ... ]
 
-const json = jsonFromTable({
-  html: `<table>...</table>`,
-  format: 'json',
-})
+const { headers, body } = JSONFromTable.arrayFromString(`<table>...</table>`)
+// { headers: [title1, titel2, ...], body: [[val2, val2, ...],...] }
 
-const arr = jsonFromTable({
-  html: `<table>...</table>`,
-  format: 'array',
-})
-
-const [headers, body] = jsonFromTable({
-  html: `<table>...</table>`,
-  format: 'raw',
-})
-```
-
-`jsonFromTable` function accepts only one argument `options`;
-
-```ts
-interface Options {
-  url?: string // utl to page which contains table
-  html?: string // html which contains table
-  selector?: string // table selector
-  hSelector?: string // head selector
-  bSelector?: [string, string] // body selector [row, td]
-  format?: 'json' | 'array' | 'raw' | 'object' // output format
-  headers?: string[] // custom headers
-}
-```
-
-## Options
-
-### url
-
-If you want the output from a url then you need to pass `url` option. The url should be of a webpage which has a table. If url parameter is passed then the function will return a promise.
-
-```js
 ;(async () => {
-  const obj = await jsonFromTable({ url: 'https://example.com' })
-
-  console.log(obj)
+  const obj = await JSONFromTable.fromUrl(`https://...`)
+  const { headers, body } = await JSONFromTable.arrayFromUrl(`https://...`)
 })()
 ```
 
-### html
+Each function in `JSONFromTable` accepts two arguments. First is source (string or url) and second is `options`.
 
-If you want the output from a html then you need to pass `html` option. The html should contain `table` tag.
+```ts
+interface Options {
+  titles?: string[] // custom titles (eg: ["sn", "name", "title"])
+  firstRowIsHeading?: boolean // use first row for titles ?
+  includeFirstRowInBody?: boolean // add first row in body ?
+  tableSelector?: string // css selector for table (eg: table.wikitable)
+  rowColSelector?: [string, string] // css selectors for row and col (eg: ["tr", "th,td"])
+  shouldBeText?: boolean // if false value is html else true
+  trim?: boolean // should trim the value ?
+}
+```
+
+## Example
 
 ```js
-const obj = jsonFromTable({
-  html: `<table>...</table>`,
-})
+const str = `<table>
+  <tr>
+    <th>name</th>
+    <th>alias</th>
+    <th>class</th>
+    <th>info</th>
+  </tr>
+  <tr>
+    <td colspan="2">Roshan</td>
+    <td>Eng</td>
+    <td rowspan="2">na</td>
+  </tr>
+  <tr>
+    <td rowspan="2">John</td>
+    <td colspan="2">Cook</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Danger</td>
+    <td colspan="2">Ninja</td>
+  </tr>
+  <tr>
+    <td>AGuy</td>
+    <td>Eng</td>
+    <td rowspan="2">Eats a lot</td>
+  </tr>
+  <tr>
+    <td colspan="2">Dante</td>
+    <td rowspan="2">Art</td>
+  </tr>
+  <tr>
+    <td>Jake</td>
+    <td>ake</td>
+    <td>Actor</td>
+  </tr>
+</table>`
 
+const obj = JSONFromTable.fromString(str)
 console.log(obj)
 ```
 
-### format
-
-If you want the json or array or raw output then you can pass `format` option. Default value is `object`.
-
-```js
-const json = jsonFromTable({
-  html: `<table>...</table>`,
-  format: 'json',
-})
-console.log(json)
-
-jsonFromTable({
-  url: `https://example.com`,
-  format: 'array',
-}).then((arr) => console.log(arr))
-
-const [headers, body] = jsonFromTable({
-  html: `<table>...</table>`,
-  format: 'raw',
-})
-console.log({ headers, body })
-```
-
-### selector
-
-If the page has more than one table, then you can pass css selector of the table as `selector`.
-
-```js
-const html = `
-<html>
-  <table>...</table>
-  <table class="table">...</table>
-</html>
-`
-
-const obj = jsonFromTable({
-  html: html,
-  selector: '.table',
-})
-
-console.log(obj)
-```
-
-### hSelector
-
-By default `tr:first-child th` is used to get the headings from table. Sometimes that selecter may not give you the best result. In such case you can provide css selector which will select all headings.
-
-```js
-const obj = jsonFromTable({
-  html: `<table>...</table>`,
-  hSelector: `thead tr:first-child th`,
-})
-
-console.log(obj)
-```
-
-### bSelector
-
-By default `['tr:not(:first-child)', 'td']` is used to get body from table. Sometimes that selecter may not give you the best result. In such case you can provide css selector.
-
-```js
-const obj = jsonFromTable({
-  html: `<table>...</table>`,
-  bSelector: ['tbody tr:not(:first-child)', 'td'],
-})
-
-console.log(obj)
-```
-
-> Note that if provided `hSelector` and `bSelector` failes to select headers/body than following selectors will be used to select and get headers and body.
-
-```js
-const hSelectors = [
-  'thead tr:first-child th',
-  'tr:first-child th',
-  'tr:first-child td',
-]
-const bSelectors = [
-  ['tbody tr', 'td'],
-  ['tr:not(:first-child)', 'td'],
-  ['tr', 'td'],
-]
-```
-
-### headers
-
-You can don't like the headers in table, you can add your own.
-
-```js
-jsonFromTable({
-  html: `<table>...</table>`
-  headers: ["SN", "Name", "Age"]
-})
-```
+<img src="./example.png" height="350" />
 
 ## License
 
