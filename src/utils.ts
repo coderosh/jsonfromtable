@@ -1,11 +1,7 @@
-import render from 'dom-serializer'
-import { selectAll, selectOne } from 'css-select'
-import { DomUtils, parseDocument } from 'htmlparser2'
-
-const { getAttributeValue, textContent } = DomUtils
+import Docpa from 'docpa'
 
 function getRowWithColumns(
-  tableDoc: ReturnType<typeof parseDocument>,
+  tableDoc: Docpa,
   selectors: [string, string],
   shouldBeText: boolean,
   trim: boolean
@@ -13,15 +9,19 @@ function getRowWithColumns(
   const rowSelector = selectors[0] || 'tr'
   const colSelector = selectors[1] || 'td,th'
 
-  return selectAll(rowSelector, tableDoc).map((tr) =>
-    selectAll(colSelector, tr).map((td) => {
-      const rowspan = (td && +getAttributeValue(td as any, 'rowspan')!) || 1
-      const colspan = (td && +getAttributeValue(td as any, 'colspan')!) || 1
-      const value =
-        (td && (shouldBeText ? textContent(td) : render(td.children))) || ''
+  return tableDoc.querySelectorAll(rowSelector).map((tr) => {
+    if (!tr) return []
+    return tr.querySelectorAll(colSelector).map((td) => {
+      if (!td) return { value: '', colspan: 1, rowspan: 1 }
+
+      const rowspan = +(td.getAttribute('rowspan') || 1) || 1
+      const colspan = +(td.getAttribute('colspan') || 1) || 1
+
+      const value = (shouldBeText ? td.textContent : td.innerHTML) || ''
+
       return { value: trim ? value.trim() : value, colspan, rowspan }
     })
-  )
+  })
 }
 
 interface ParseTableOptions {
@@ -39,8 +39,8 @@ function parseTable(html: string, options: ParseTableOptions) {
     trim = true,
   } = options
 
-  const document = parseDocument(html)
-  const table = selectOne(tableSelector, document)
+  const document = new Docpa(html)
+  const table = document.querySelector(tableSelector)
 
   if (!table) throw new Error(`${tableSelector} not found in document.`)
 

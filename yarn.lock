@@ -1247,10 +1247,10 @@ cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-css-select@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/css-select/-/css-select-4.2.0.tgz#ab28276d3afb00cc05e818bd33eb030f14f57895"
-  integrity sha512-6YVG6hsH9yIb/si3Th/is8Pex7qnVHO6t7q7U6TIUnkQASGbS8tnUDBftnPynLNnuUl/r2+PTd0ekiiq7R0zJw==
+css-select@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/css-select/-/css-select-4.2.1.tgz#9e665d6ae4c7f9d65dbe69d0316e3221fb274cdd"
+  integrity sha512-/aUslKhzkTNCQUB2qTX84lVmfia9NyjP3WpDGtj/WxhwBzWBYUV3DgUpurHTme8UTPcPlAD1DJ+b0nN/t50zDQ==
   dependencies:
     boolbase "^1.0.0"
     css-what "^5.1.0"
@@ -1363,6 +1363,15 @@ dir-glob@^3.0.1:
   integrity sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==
   dependencies:
     path-type "^4.0.0"
+
+docpa@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/docpa/-/docpa-1.0.0.tgz#98a27c64f30777ac169e494f271b12bf55b3bbde"
+  integrity sha512-v1aSAg6uLEAES4IIuFqQxl7+DrCpWkBf/8IJJo0vSU7FLMU6lTSzvizPvx0TSFgmsu93klxGDGlRIBKkJ4JDxA==
+  dependencies:
+    css-select "^4.2.1"
+    dom-serializer "^1.3.2"
+    htmlparser2 "^7.2.0"
 
 doctrine@^2.1.0:
   version "2.1.0"
