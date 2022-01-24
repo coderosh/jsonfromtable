@@ -1,12 +1,16 @@
-# jsonFromTable
+<img src="./images/banner.png" alt="banner" width="100%">
 
-Convert html tables to object (or array). Supports complex rowspan and colspan.
+<p align="center">
+  Convert html tables to object (or array). Supports complex rowspan and colspan.
+</p>
 
-<a href="https://www.npmjs.com/package/jsonfromtable"><img alt="NPM" src="https://img.shields.io/npm/v/jsonfromtable" /></a>
-<a href="https://github.com/coderosh/jsonfromtable"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
-<a href="#"><img alt="CI" src="https://img.shields.io/github/workflow/status/coderosh/jsonfromtable/CI"></a>
-<a href="https://github.com/coderosh/jsonfromtalbe"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" /></a>
-<a href="https://github.com/coderosh/jsonfromtalbe"><img src="https://img.shields.io/badge/types-typescript-blue.svg" alt="Typescript" /></a>
+<p align="center">
+  <a href="https://www.npmjs.com/package/jsonfromtable"><img alt="NPM" src="https://img.shields.io/npm/v/jsonfromtable" /></a>
+  <a href="https://github.com/coderosh/jsonfromtable"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+  <a href="#"><img alt="CI" src="https://img.shields.io/github/workflow/status/coderosh/jsonfromtable/CI"></a>
+  <a href="https://github.com/coderosh/jsonfromtalbe"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome!" /></a>
+  <a href="https://github.com/coderosh/jsonfromtalbe"><img src="https://img.shields.io/badge/types-typescript-blue.svg" alt="Typescript" /></a>
+</p>
 
 ## Installation
 
@@ -24,22 +28,57 @@ yarn add jsonfromtable
 
 ## Usage
 
+### From html string
+
+- Get array of objects with title as keys
+
+  ```js
+  const { JSONFromTable } = require('jsonfromtable')
+
+  const obj = JSONFromTable.fromString(`<html>...</html>`)
+  console.log(obj)
+  /*
+  [
+    {
+      title: value1,
+      title2: value2,
+      ...
+    },
+    ...
+  ]
+  */
+  ```
+
+- Get array of title and body
+
+  ```js
+  const { JSONFromTable } = require('jsonfromtable')
+
+  const { headers, body } = JSONFromTable.arrayFromString(`<html>...</html>`)
+  console.log(headers) // [title1, title2, title3, ...]
+  console.log(body) // [ [val1, val2, ...], [val3, val4, ...], ... ]
+  ```
+
+### From url
+
 ```js
 const { JSONFromTable } = require('jsonfromtable')
 
-const obj = JSONFromTable.fromString(`<table>...</table>`)
-// [ { title1: value1, title2: value2, ... }, ... ]
-
-const { headers, body } = JSONFromTable.arrayFromString(`<table>...</table>`)
-// { headers: [title1, titel2, ...], body: [[val2, val2, ...],...] }
-
-;(async () => {
+async function main() {
   const obj = await JSONFromTable.fromUrl(`https://...`)
+  console.log(obj)
+
   const { headers, body } = await JSONFromTable.arrayFromUrl(`https://...`)
-})()
+  console.log(headers)
+  console.log(body)
+}
+
+main()
 ```
 
-Each function in `JSONFromTable` accepts two arguments. First is source (string or url) and second is `options`.
+<br />
+
+Each function in `JSONFromTable` accepts two arguments. First is source (html string or url) and second is `options`.
 
 ```ts
 interface Options {
@@ -74,15 +113,15 @@ const str = `<table>
   </tr>
   <tr>
     <td rowspan="2">Danger</td>
-    <td colspan="2">Ninja</td>
+    <td colspan="2"> Ninja</td>
   </tr>
   <tr>
     <td>AGuy</td>
     <td>Eng</td>
-    <td rowspan="2">Eats a lot</td>
+    <td rowspan="2">Eats a lot </td>
   </tr>
   <tr>
-    <td colspan="2">Dante</td>
+    <td colspan="2"> Dante</td>
     <td rowspan="2">Art</td>
   </tr>
   <tr>
@@ -92,11 +131,15 @@ const str = `<table>
   </tr>
 </table>`
 
-const obj = JSONFromTable.fromString(str)
+const obj = JSONFromTable.fromString(str, {
+  tableSelector: 'table',
+  trim: true,
+})
+
 console.log(obj)
 ```
 
-<img src="./example.png" height="350" />
+<img src="./images/example.png" />
 
 ## License
 
